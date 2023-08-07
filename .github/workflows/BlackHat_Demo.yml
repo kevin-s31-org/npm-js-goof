@@ -11,7 +11,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --code --report --project-name=npm-js-goof-github-action || true
+          args: --code --report --project-name=npm-js-goof-github-action --org=demo-i34 || true
   snyk-test-job:
      runs-on: ubuntu-latest
      steps:
@@ -22,7 +22,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --test --all-projects
+          args: --test --all-projects --org=demo-i34
   snyk-monitor-job:
      needs: snyk-test-job
      runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-           command: monitor --all-projects
+           command: monitor --all-projects --org=demo-i34
   snyk-container-test-monitor-job:
      runs-on: ubuntu-latest
      steps:
@@ -55,7 +55,7 @@ jobs:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
        with:
          image: example:1.0
-         command: monitor
+         command: monitor --org=demo-i34
          #args: --container monitor example:1.0
   #snyk-iac-test:
   #   runs-on: ubuntu-latest
@@ -77,4 +77,4 @@ jobs:
        env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
        with:
-         args: --report
+         args: --report --org=demo-i34
