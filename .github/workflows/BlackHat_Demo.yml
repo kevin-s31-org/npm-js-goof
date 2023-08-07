@@ -44,6 +44,7 @@ jobs:
        run: docker build . --file=Dockerfile --tag example:1.0
        
   snyk-container-test-job:
+     needs: Build-container-job
      runs-on: ubuntu-latest
      steps:
      - name: Snyk container test
