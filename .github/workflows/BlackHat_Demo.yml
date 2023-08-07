@@ -12,6 +12,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --code --report --project-name=npm-js-goof-github-action --org=demo-i34 || true
+          
   snyk-test-job:
      runs-on: ubuntu-latest
      steps:
@@ -22,6 +23,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk test --all-projects --org=demo-i34
+        
   snyk-monitor-job:
      needs: snyk-test-job
      runs-on: ubuntu-latest
@@ -32,12 +34,18 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk monitor --all-projects --org=demo-i34
-  snyk-container-test-monitor-job:
+##################################################################
+        
+  Build-container-job:
      runs-on: ubuntu-latest
      steps:
      - uses: actions/checkout@master
      - name: Build docker image
        run: docker build . --file=Dockerfile --tag example:1.0
+       
+  snyk-container-test-job:
+     runs-on: ubuntu-latest
+     steps:
      - name: Snyk container test
        uses: snyk/actions/docker@master
        continue-on-error: true
@@ -46,14 +54,20 @@ jobs:
        with:
          image: example:1.0
          #args: --container example:1.0
+         
+  snyk-container-monitor-job:
+     needs: snyk-container-test-job
+     runs-on: ubuntu-latest
+     steps:
      - name: Snyk container monitor
        uses: snyk/actions/docker@master
        env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
        with:
          image: example:1.0
-         command: monitor --org=demo-i34
+         command: monitor --org=demo-i34 --nested-jars-depth=5
          #args: --container monitor example:1.0
+  ##################################################################
   #snyk-iac-test:
   #   runs-on: ubuntu-latest
   #   steps:
