@@ -36,17 +36,12 @@ jobs:
         run: snyk monitor --all-projects --org=demo-i34
 ##################################################################
         
-  Build-container-job:
+ Container-Build-with-Snyk-Container-Test-Monitor:
      runs-on: ubuntu-latest
      steps:
      - uses: actions/checkout@master
      - name: Build docker image
        run: docker build . --file=Dockerfile --tag example:1.0
-       
-  snyk-container-test-job:
-     needs: Build-container-job
-     runs-on: ubuntu-latest
-     steps:
      - name: Snyk container test
        uses: snyk/actions/docker@master
        continue-on-error: true
@@ -55,19 +50,13 @@ jobs:
        with:
          image: example:1.0
          #args: --container example:1.0
-         
-  snyk-container-monitor-job:
-     needs: snyk-container-test-job
-     runs-on: ubuntu-latest
-     steps:
      - name: Snyk container monitor
        uses: snyk/actions/docker@master
        env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
        with:
          image: example:1.0
-         command: monitor --org=demo-i34 --nested-jars-depth=5
-         #args: --container monitor example:1.0
+         command: monitor
   ##################################################################
   #snyk-iac-test:
   #   runs-on: ubuntu-latest
